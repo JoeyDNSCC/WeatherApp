@@ -5,12 +5,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.example.weatherapp.R
 import com.example.weatherapp.models.DailyWeather
 import java.time.LocalDate
@@ -23,7 +32,7 @@ fun Forecast() {
     val today = LocalDate.now()
 
     // Generated dummy data then applied proper icons
-    listOf(
+    val forecast = listOf(
         DailyWeather(
             date = today,
             tempHigh = 10,
@@ -33,7 +42,7 @@ fun Forecast() {
             precipitationAmount = 52.39,
             maxWind = 41,
             humidity = 96,
-            resourceId = R.drawable.rain_icon_v1
+            resourceId = R.drawable.outline_rainy_heavy_24
         ),
         DailyWeather(
             date = today.plusDays(1),
@@ -44,7 +53,7 @@ fun Forecast() {
             precipitationAmount = 12.5,
             maxWind = 30,
             humidity = 85,
-            resourceId = R.drawable.rain_icon_v1
+            resourceId = R.drawable.outline_rainy_light_24
         ),
         DailyWeather(
             date = today.plusDays(2),
@@ -55,7 +64,7 @@ fun Forecast() {
             precipitationAmount = 1.0,
             maxWind = 22,
             humidity = 75,
-            resourceId = R.drawable.rain_icon_v1
+            resourceId = R.drawable.outline_cloud_24
         ),
         DailyWeather(
             date = today.plusDays(3),
@@ -66,7 +75,7 @@ fun Forecast() {
             precipitationAmount = 0.0,
             maxWind = 18,
             humidity = 65,
-            resourceId = R.drawable.rain_icon_v1
+            resourceId = R.drawable.outline_partly_cloudy_day_24
         ),
         DailyWeather(
             date = today.plusDays(4),
@@ -77,18 +86,18 @@ fun Forecast() {
             precipitationAmount = 8.2,
             maxWind = 35,
             humidity = 88,
-            resourceId = R.drawable.rain_icon_v1
+            resourceId = R.drawable.outline_rainy_heavy_24
         ),
         DailyWeather(
             date = today.plusDays(5),
-            tempHigh = 15,
+            tempHigh = 18,
             tempLow = 9,
-            weather = "Overcast",
-            precipitationChance = 15,
+            weather = "Sunny",
+            precipitationChance = 0,
             precipitationAmount = 0.0,
             maxWind = 20,
-            humidity = 72,
-            resourceId = R.drawable.rain_icon_v1
+            humidity = 38,
+            resourceId = R.drawable.outline_sunny_24
         ),
         DailyWeather(
             date = today.plusDays(6),
@@ -99,34 +108,55 @@ fun Forecast() {
             precipitationAmount = 3.4,
             maxWind = 25,
             humidity = 80,
-            resourceId = R.drawable.rain_icon_v1
+            resourceId = R.drawable.outline_cloud_24
         )
     )
 
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
+    val dateFormatter = DateTimeFormatter.ofPattern(
+        "EEE, MMM d",
+        Locale.ENGLISH
+    )
+
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = Modifier.fillMaxSize()
     ) {
-        Row(
-            verticalAlignment = Alignment.Top,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            Text(
-                text = day.date.format(DateTimeFormatter.ofPattern("EEE, MMM. d", Locale.ENGLISH)),
-                style = MaterialTheme.typography.labelSmall
-            )
+        items(forecast) { day ->
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 2.dp
+                )
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ){
+                            Text(
+                                text = day.date.format(dateFormatter),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold
+                            )
 
-            Image(
-                painter = painterResource(id = day.resourceId),
-                contentDescription = day.weather
-            )
+
+                        }
+                    }
+                }
+
+
+                Image(
+                    painter = painterResource(id = day.resourceId),
+                    contentDescription = day.weather
+                )
+            }
+
         }
-
-
 
     }
 }

@@ -48,10 +48,10 @@ fun Navigation() {
                 title = {
                     // Re-render when selectedIndex changes
                     if(selectedIndex == 0){
-                        Text("Pokemon Search")
+                        Text("Halifax, Nova Scotia")
                     }
                     else if(selectedIndex == 1){
-                        Text("Favorites")
+                        Text("Halifax, Nova Scotia")
                     }
                 }
             )

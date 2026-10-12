@@ -128,23 +128,14 @@ fun Forecast() {
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp)
     ) {
-        Text(
-            text = "7-Day Forecast",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(
                 items = forecast,
-                key = { it.date.toString() }
+                //key = { it.date.toString() }
             ) { day ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),

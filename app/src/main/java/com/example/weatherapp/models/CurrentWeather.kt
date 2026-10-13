@@ -1,5 +1,7 @@
 package com.example.weatherapp.models
 
+import android.graphics.drawable.Icon
+
 data class CurrentWeather(
     val weather: String,
     val temp: Int,

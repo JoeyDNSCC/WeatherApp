@@ -1,5 +1,4 @@
 package com.example.weatherapp.models
-
 import java.time.LocalDate
 
 class DailyWeather(

@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,7 +43,7 @@ fun CurrentWeatherScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            //.background(color = Color.Blue)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Spacer(modifier = Modifier.height(100.dp))
         Image(
@@ -73,7 +76,7 @@ fun CurrentWeatherScreen() {
         )
 
         Text(
-            text = "Wind ${currentWeather.windDirection} ${currentWeather.windSpeed}",
+            text = "Wind ${currentWeather.windDirection} ${currentWeather.windSpeed} km/h",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

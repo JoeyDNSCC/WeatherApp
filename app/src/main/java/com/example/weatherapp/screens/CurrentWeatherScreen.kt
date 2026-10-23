@@ -1,34 +1,30 @@
 package com.example.weatherapp.screens
 
-import android.R.attr.background
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material3.Icon
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.paint
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.weatherapp.MainViewModel
 import com.example.weatherapp.R
 
-import com.example.weatherapp.models.CurrentWeather
+import com.example.weatherapp.data.CurrentWeather
 
 @Composable
-fun CurrentWeatherScreen() {
+fun CurrentWeatherScreen(viewModel: MainViewModel) {
+
+//    val locationSearch = viewModel.locationSearch
 
     val currentWeather = CurrentWeather(
         weather = "Partly cloudy",
@@ -81,7 +77,16 @@ fun CurrentWeatherScreen() {
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        Spacer(modifier = Modifier.height(48.dp))
+        Column {
+            Button(
+                onClick = {
+                    viewModel.searchLocation("Halifax")
+                }
+            ) {
+                Text("Search Halifax")
+            }
+        }
+        // Spacer(modifier = Modifier.height(48.dp))
 
     }
 }

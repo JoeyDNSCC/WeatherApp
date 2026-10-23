@@ -1,5 +1,6 @@
-package com.example.weatherapp.models
+package com.example.weatherapp.data
 import java.time.LocalDate
+
 
 class DailyWeather(
     val date: LocalDate,

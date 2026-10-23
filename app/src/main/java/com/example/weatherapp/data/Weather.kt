@@ -1,13 +1,10 @@
-package com.example.weatherapp.models
+package com.example.weatherapp.data
 
-import android.graphics.drawable.Icon
-
-data class CurrentWeather(
+data class Weather (
     val weather: String,
     val temp: Int,
     val feelsLike: Int,
     val windSpeed: Int,
     val windDirection: String,
     val resourceId: Int
-)
-
+    )

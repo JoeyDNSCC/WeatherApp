@@ -1,5 +1,6 @@
-package com.example.weatherapp.ui.screens
+package com.example.weatherapp.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,250 +13,192 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.weatherapp.MainViewModel
-import com.example.weatherapp.R
-import com.example.weatherapp.data.DailyWeather
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.res.painterResource
+import coil3.compose.AsyncImage
+import com.example.weatherapp.R
+import java.time.LocalDate
 
+
+fun formatDate(date: String): String {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val parsedDate = LocalDate.parse(date, formatter)
+
+    val day = parsedDate.dayOfMonth
+
+    val suffix = when {
+        day in 11..13 -> "th"
+        day % 10 == 1 -> "st"
+        day % 10 == 2 -> "nd"
+        day % 10 == 3 -> "rd"
+        else -> "th"
+    }
+
+    return "${parsedDate.format(DateTimeFormatter.ofPattern("MMMM d"))}$suffix"
+
+}
 
 @Composable
 fun Forecast(viewModel: MainViewModel) {
 
-    val locationSearch = viewModel.searchLocation("Halifax")
+    //val weather = viewModel.getWeather("Halifax,NS")
 
-    val forecast = remember {
-        val today = LocalDate.now()
+    val weather = viewModel.weather
+    //val searchTextFieldState = rememberTextFieldState(initialText = "")
+//    LaunchedEffect(Unit) {
+//        viewModel.loadWeatherIfNeeded("Halifax,NS")
+//    }
 
-        listOf(
-            DailyWeather(
-                date = today,
-                tempHigh = 10,
-                tempLow = 3,
-                weather = "Heavy rain",
-                precipitationChance = 76,
-                precipitationAmount = 52.39,
-                maxWind = 41,
-                humidity = 96,
-                resourceId = R.drawable.outline_rainy_heavy_24
-            ),
-            DailyWeather(
-                date = today.plusDays(1),
-                tempHigh = 12,
-                tempLow = 5,
-                weather = "Light rain",
-                precipitationChance = 65,
-                precipitationAmount = 12.5,
-                maxWind = 30,
-                humidity = 85,
-                resourceId = R.drawable.outline_rainy_light_24
-            ),
-            DailyWeather(
-                date = today.plusDays(2),
-                tempHigh = 14,
-                tempLow = 6,
-                weather = "Cloudy",
-                precipitationChance = 20,
-                precipitationAmount = 1.0,
-                maxWind = 22,
-                humidity = 75,
-                resourceId = R.drawable.outline_cloud_24
-            ),
-            DailyWeather(
-                date = today.plusDays(3),
-                tempHigh = 16,
-                tempLow = 8,
-                weather = "Partly cloudy",
-                precipitationChance = 10,
-                precipitationAmount = 0.0,
-                maxWind = 18,
-                humidity = 65,
-                resourceId = R.drawable.outline_partly_cloudy_day_24
-            ),
-            DailyWeather(
-                date = today.plusDays(4),
-                tempHigh = 13,
-                tempLow = 7,
-                weather = "Showers",
-                precipitationChance = 55,
-                precipitationAmount = 8.2,
-                maxWind = 35,
-                humidity = 88,
-                resourceId = R.drawable.outline_rainy_24
-            ),
-            DailyWeather(
-                date = today.plusDays(5),
-                tempHigh = 18,
-                tempLow = 9,
-                weather = "Sunny",
-                precipitationChance = 15,
-                precipitationAmount = 0.0,
-                maxWind = 20,
-                humidity = 44,
-                resourceId = R.drawable.outline_sunny_24
-            ),
-            DailyWeather(
-                date = today.plusDays(6),
-                tempHigh = 17,
-                tempLow = 10,
-                weather = "Light rain",
-                precipitationChance = 40,
-                precipitationAmount = 3.4,
-                maxWind = 25,
-                humidity = 80,
-                resourceId = R.drawable.outline_rainy_light_24
-            )
-        )
-    }
 
     val dateFormatter = DateTimeFormatter.ofPattern(
         "EEE, MMM d",
         Locale.ENGLISH
     )
 
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        items(items = forecast) { day ->
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 2.dp
-                ),
-                colors = CardDefaults.cardColors(
-                    containerColor =
-                        MaterialTheme.colorScheme.surface
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
+    weather?.let {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            items(items = weather.forecast.forecastDays) { item ->
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 2.dp
+                    ),
+                    colors = CardDefaults.cardColors(
+                        containerColor =
+                            MaterialTheme.colorScheme.surface
+                    )
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        modifier = Modifier.padding(16.dp)
                     ) {
-                        Column(
-                            modifier = Modifier.weight(1f)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
+                            Column(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(
+                                    text = formatDate(item.date),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+
+                                Text(
+                                    text = item.day.condition.text,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+
+                            AsyncImage(
+                                model = "https:${item.day.condition.icon}",
+                                contentDescription = item.day.condition.text,
+                                modifier = Modifier.size(48.dp),
+                            )
+
+                            Spacer(modifier = Modifier.size(12.dp))
+
                             Text(
-                                text = day.date.format(dateFormatter),
+                                text = "${item.day.maxTempC}° / ${item.day.minTempC}°",
                                 style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.SemiBold
-                            )
-
-                            Text(
-                                text = day.weather,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                fontWeight = FontWeight.Bold
                             )
                         }
 
-                        Image(
-                            painter = painterResource(
-                                id = day.resourceId
-                            ),
-                            contentDescription = day.weather,
-                            modifier = Modifier.size(48.dp)
-                        )
+                        Spacer(modifier = Modifier.height(12.dp))
 
-                        Spacer(modifier = Modifier.size(12.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
 
-                        Text(
-                            text = "${day.tempHigh}° / ${day.tempLow}°",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+                            Column {
+                                Text(
+                                    text = "Rain chance",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                                Text(
+                                    text = "${item.day.dailyChanceOfRain}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                            Column {
+                                Text(
+                                    text = "Rainfall",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-
-                        Column {
-                            Text(
-                                text = "Rain chance",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-
-                            Text(
-                                text = "${day.precipitationChance}",
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
-                        Column {
-                            Text(
-                                text = "Rainfall",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-
-                            Text(
-                                text = "${day.precipitationAmount}",
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-
-                        Column {
-                            Text(
-                                text = "Max wind",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-
-                            Text(
-                                text = "${day.maxWind}",
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Medium
-                            )
+                                Text(
+                                    text = "${item.day.totalPrecipitationMm}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
                         }
 
-                        Column {
-                            Text(
-                                text = "Humidity",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                        Spacer(modifier = Modifier.height(8.dp))
 
-                            Text(
-                                text = "${day.humidity}",
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Medium
-                            )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+
+                            Column {
+                                Text(
+                                    text = "Max wind",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+
+                                Text(
+                                    text = "${item.day.maxWindKph}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+
+                            Column {
+                                Text(
+                                    text = "Humidity",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+
+                                Text(
+                                    text = "${item.day.avgHumidity}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+
                         }
-
                     }
                 }
             }
         }
     }
+
 }
